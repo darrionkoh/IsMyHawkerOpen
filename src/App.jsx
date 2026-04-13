@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { AlertTriangle, CheckCircle, Clock, Menu } from 'lucide-react'; // Grouped imports
+import { AlertTriangle, CheckCircle, Clock, Menu } from 'lucide-react';
 import LocateButton from './components/LocateButton';
 import HawkerPopup from './components/HawkerPopup';
 import SettingsDrawer from './components/SettingsDrawer';
@@ -15,6 +15,17 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const today = new Date();
+
+  // --- DARK MODE LOGIC ---
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("dark-mode") === "true";
+  });
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem("dark-mode", newMode);
+  };
 
   // Favorites logic
   const [favorites, setFavorites] = useState(() => {
@@ -94,12 +105,13 @@ function App() {
           className="h-full w-full"
           zoomControl={false}
         >
+          {/* DYNAMIC TILE LAYER */}
           <TileLayer
-            url="https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png"
+            url={`https://www.onemap.gov.sg/maps/tiles/${isDarkMode ? 'Night' : 'Default'}/{z}/{x}/{y}.png`}
             attribution='OneMap'
           />
 
-          <LocateButton />
+          <LocateButton isDarkMode={isDarkMode} />
           
           {filteredHawkers.map(hawker => (
             <Marker 
@@ -130,11 +142,14 @@ function App() {
         </MapContainer>
 
         <button 
-          onClick={() => setIsSettingsOpen(true)}
-          className="absolute bottom-10 left-5 z-[1001] bg-white w-15 h-15 rounded-full shadow-2xl border border-slate-200 text-red-600 hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center"
-          title="Open Settings"
+        onClick={() => setIsSettingsOpen(true)}
+        className={`absolute bottom-10 left-5 z-[1001] w-15 h-15 rounded-full shadow-2xl border transition-all active:scale-90 flex items-center justify-center
+          ${isDarkMode 
+            ? 'bg-slate-800 border-slate-700 text-red-500 hover:bg-slate-700' 
+            : 'bg-white border-slate-200 text-red-600 hover:bg-slate-50'}`}
+        title="Open Settings"
         >
-          <Menu size={24} />
+         <Menu size={24} />
         </button>
 
         <SettingsDrawer 
@@ -142,6 +157,8 @@ function App() {
           onClose={() => setIsSettingsOpen(false)} 
           onClearFavorites={clearFavorites}
           favoritesCount={favorites.length}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={toggleDarkMode}
         />
       </main>
 
