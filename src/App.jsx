@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { AlertTriangle, CheckCircle, Clock } from 'lucide-react'; // Added Clock icon
+import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import LocateButton from './components/LocateButton';
 import HawkerPopup from './components/HawkerPopup';
 
@@ -19,7 +19,7 @@ import './index.css';
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const today = new Date("2026-06-06");
+  const today = new Date();
 
   const allHawkers = useMemo(() => {
     return HAWKER_DATA_RAW?.features
