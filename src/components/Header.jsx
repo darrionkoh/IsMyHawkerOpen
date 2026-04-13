@@ -1,5 +1,5 @@
 import React from 'react';
-import { Soup, Search } from 'lucide-react';
+import { Soup, Search, Heart } from 'lucide-react';
 
 const Header = ({ searchTerm, setSearchTerm, filter, setFilter, today }) => {
   return (
@@ -25,16 +25,24 @@ const Header = ({ searchTerm, setSearchTerm, filter, setFilter, today }) => {
         />
       </div>
 
-      <div className="flex gap-2 text-[10px] font-black">
-        {["all", "open", "closed"].map((type) => (
+      {/* Filter Row with Favorites Added */}
+      <div className="flex gap-1.5 text-[9px] font-black">
+        {["all", "open", "closed", "favorites"].map((type) => (
           <button 
             key={type}
             onClick={() => setFilter(type)}
-            className={`flex-1 py-2 rounded uppercase transition-all shadow-sm ${
+            className={`flex-1 py-2 rounded uppercase transition-all shadow-sm flex items-center justify-center gap-1 ${
               filter === type ? 'bg-white text-red-600' : 'bg-red-700 text-red-100 hover:bg-red-800'
             }`}
           >
-            {type}
+            {type === "favorites" ? (
+              <>
+                <Heart size={10} fill={filter === "favorites" ? "currentColor" : "none"} />
+                <span>Favs</span>
+              </>
+            ) : (
+              type
+            )}
           </button>
         ))}
       </div>

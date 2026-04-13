@@ -17,6 +17,22 @@ import CLOSURE_DATA from './data/closures.json';
 import './index.css';
 
 function App() {
+
+  const [favorites, setFavorites] = useState(() => {
+  const saved = localStorage.getItem("hawker-favorites");
+  return saved ? JSON.parse(saved) : [];
+  });
+
+  const toggleFavorite = (id) => {
+  const newFavorites = favorites.includes(id)
+    ? favorites.filter(favId => favId !== id)
+    : [...favorites, id];
+    
+  setFavorites(newFavorites);
+  localStorage.setItem("hawker-favorites", JSON.stringify(newFavorites));
+  };
+
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const today = new Date();
@@ -54,6 +70,8 @@ function App() {
 
   const filteredHawkers = allHawkers.filter(h => {
     const matchesSearch = h.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (filter === "favorites") return matchesSearch && favorites.includes(h.id);
     if (filter === "open") return matchesSearch && h.status !== "closed";
     if (filter === "closed") return matchesSearch && h.status === "closed";
     return matchesSearch;
@@ -100,7 +118,10 @@ function App() {
               }}
             >
               <Popup>
-                <HawkerPopup hawker={hawker} />
+                <HawkerPopup hawker={hawker} 
+                isFavorite={favorites.includes(hawker.id)}
+                onToggleFavorite={() => toggleFavorite(hawker.id)}
+                />
               </Popup>
             </Marker>
           ))}

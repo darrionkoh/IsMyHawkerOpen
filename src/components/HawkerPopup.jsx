@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { AlertTriangle, CheckCircle, Clock, Info, Calendar, Map as MapIcon } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Info, Calendar, Map as MapIcon, Heart } from 'lucide-react';
 
-const HawkerPopup = ({ hawker }) => {
+const HawkerPopup = ({ hawker, isFavorite, onToggleFavorite }) => {
   const [tab, setTab] = useState('status');
 
   return (
@@ -10,6 +10,7 @@ const HawkerPopup = ({ hawker }) => {
         <img src={hawker.image} alt={hawker.name} className="w-full h-24 object-cover" />
       )}
 
+      {/* Sliding Tab Container */}
       <div className="relative flex bg-slate-100 p-1 m-2 rounded-lg">
         <div 
           className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-md shadow-sm transition-transform duration-300 ease-in-out"
@@ -38,11 +39,28 @@ const HawkerPopup = ({ hawker }) => {
       <div className="p-3 pt-1 min-h-[120px]">
         {tab === 'status' ? (
           <div>
-            <h2 className={`font-bold text-sm uppercase leading-tight 
-              ${hawker.status === 'closed' ? 'text-red-600' : 
-                hawker.status === 'warning' ? 'text-amber-600' : 'text-slate-800'}`}>
-              {hawker.name}
-            </h2>
+            {/* Title and Heart Section */}
+            <div className="flex justify-between items-start gap-2">
+              <h2 className={`font-bold text-sm uppercase leading-tight flex-1
+                ${hawker.status === 'closed' ? 'text-red-600' : 
+                  hawker.status === 'warning' ? 'text-amber-600' : 'text-slate-800'}`}>
+                {hawker.name}
+              </h2>
+              
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevents map interaction when clicking heart
+                  onToggleFavorite();
+                }}
+                className="transition-transform active:scale-125 hover:scale-110"
+                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Heart 
+                  size={18} 
+                  className={`transition-colors duration-300 ${isFavorite ? "fill-red-500 text-red-500" : "text-slate-300"}`} 
+                />
+              </button>
+            </div>
             
             <div className={`mt-2 py-1 px-2 rounded text-[9px] font-black flex items-center gap-1 w-fit
               ${hawker.status === 'closed' ? 'bg-red-100 text-red-700' : 
