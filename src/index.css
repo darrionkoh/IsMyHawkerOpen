@@ -6,3 +6,14 @@
   height: 100%;
   z-index: 1;
 }
+
+/* hawker popup dark mode */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+}

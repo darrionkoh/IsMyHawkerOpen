@@ -135,6 +135,7 @@ function App() {
                   hawker={hawker} 
                   isFavorite={favorites.includes(hawker.id)}
                   onToggleFavorite={() => toggleFavorite(hawker.id)}
+                  isDarkMode={isDarkMode}
                 />
               </Popup>
             </Marker>
