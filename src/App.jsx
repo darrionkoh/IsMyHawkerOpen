@@ -16,7 +16,18 @@ function App() {
   const [filter, setFilter] = useState("all");
   const today = new Date();
 
-  // --- DARK MODE LOGIC ---
+  if (!HAWKER_DATA_RAW || !HAWKER_DATA_RAW.features) {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 text-red-600">
+        <div className="animate-bounce mb-4">
+           <AlertTriangle size={48} />
+        </div>
+        <h1 className="text-xl font-black uppercase tracking-tighter">Loading Hawker Data...</h1>
+      </div>
+    );
+  }
+
+  // Dark Mode
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("dark-mode") === "true";
   });
@@ -27,7 +38,7 @@ function App() {
     localStorage.setItem("dark-mode", newMode);
   };
 
-  // Favorites logic
+  // Favorites
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("hawker-favorites");
     return saved ? JSON.parse(saved) : [];
