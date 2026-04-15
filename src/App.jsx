@@ -100,7 +100,7 @@ function App() {
   });
 
   return (
-    <div className="fixed inset-0 flex flex-col h-screen w-screen bg-slate-50 font-sans overflow-hidden">
+    <div className="fixed inset-0 flex flex-col h-[100dvh] w-screen bg-slate-50 font-sans overflow-hidden">
       <Header
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
