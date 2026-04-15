@@ -1,6 +1,22 @@
 @import "tailwindcss";
 
-/* ensures map fills container */
+/* mobile */
+html,
+body {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+  height: -webkit-fill-available;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* map fills container */
 .leaflet-container {
   width: 100%;
   height: 100%;
@@ -8,7 +24,8 @@
 }
 
 /* hawker popup dark mode */
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
   background-color: transparent !important;
   box-shadow: none !important;
   padding: 0 !important;
