@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMap } from 'react-leaflet';
 import { MapPin } from 'lucide-react';
 
@@ -17,11 +16,11 @@ const LocateButton = ({ isDarkMode }) => {
   };
 
   return (
-    <button 
+    <button
       onClick={handleLocate}
       className={`absolute bottom-10 right-5 z-[1000] w-15 h-15 rounded-full shadow-2xl border transition-all active:scale-90 flex items-center justify-center
-        ${isDarkMode 
-          ? 'bg-slate-800 border-slate-700 text-red-500 hover:bg-slate-700' 
+        ${isDarkMode
+          ? 'bg-slate-800 border-slate-700 text-red-500 hover:bg-slate-700'
           : 'bg-white border-slate-200 text-red-600 hover:bg-slate-50'}`}
       title="Locate Me"
     >

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Soup, Search, Heart } from 'lucide-react';
 
 const Header = ({ searchTerm, setSearchTerm, filter, setFilter, today }) => {
@@ -25,7 +24,6 @@ const Header = ({ searchTerm, setSearchTerm, filter, setFilter, today }) => {
         />
       </div>
 
-      {/* Filter Row with Favorites Added */}
       <div className="flex gap-1.5 text-[9px] font-black">
         {["all", "open", "closed", "favorites"].map((type) => (
           <button
