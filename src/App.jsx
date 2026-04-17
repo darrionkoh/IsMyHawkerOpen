@@ -13,15 +13,24 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-
-  //live data
   const [rawData, setRawData] = useState({ hawkers: null, closures: null });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const today = new Date();
 
-  //fetch data n cache all hawkers in sessionstorage
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("dark-mode") === "true");
+
+  // This is the "Nuclear Fix" for the stuck footer
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem("dark-mode", isDarkMode);
+  }, [isDarkMode]);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -31,11 +40,9 @@ function App() {
           setIsLoading(false);
           return;
         }
-
         const data = await fetchHawkerData();
         if (data) {
           setRawData(data);
-          // no429limit
           sessionStorage.setItem("hawker_cache", JSON.stringify(data));
         }
       } catch (err) {
@@ -47,12 +54,7 @@ function App() {
     loadData();
   }, []);
 
-  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("dark-mode") === "true");
-  const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    localStorage.setItem("dark-mode", newMode);
-  };
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("hawker-favorites");
@@ -76,21 +78,16 @@ function App() {
 
   const allHawkers = useMemo(() => {
     if (!rawData.hawkers || !rawData.closures) return [];
-
     return rawData.hawkers
       .filter(f => f.geometry && f.geometry.coordinates)
       .map(feature => {
         const name = feature.properties?.NAME || "Unknown Hawker";
-
-        // Find matching closure from live API records
         const closure = Array.isArray(rawData.closures) ? rawData.closures.find(c => {
           const cName = c.name || "";
           return name.toLowerCase().includes(cName.toLowerCase()) ||
             cName.toLowerCase().includes(name.toLowerCase());
         }) : null;
-
         const { status, displayDate } = checkIsClosed(closure, today);
-
         return {
           id: feature.properties?.OBJECTID || Math.random(),
           name,
@@ -118,26 +115,26 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 text-violet-600">
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-white dark:bg-slate-900 text-violet-600 transition-colors">
         <Loader2 className="animate-spin mb-4" size={48} />
-        <h1 className="text-xl font-black uppercase tracking-widest">Syncing...</h1>
+        <h1 className="text-xl font-black uppercase tracking-widest dark:text-violet-400">Syncing...</h1>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center bg-red-50 text-red-600 p-8 text-center">
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-red-50 dark:bg-slate-900 text-red-600 p-8 text-center transition-colors">
         <AlertTriangle size={48} className="mb-4" />
         <h1 className="text-xl font-bold uppercase">Connection Error</h1>
-        <p className="mt-2 text-sm max-w-xs">{error}</p>
+        <p className="mt-2 text-sm max-w-xs dark:text-red-400">{error}</p>
         <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2 bg-red-600 text-white rounded-full font-bold">Retry</button>
       </div>
     );
   }
 
   return (
-    <div className={`fixed inset-0 flex flex-col h-[100dvh] w-screen font-sans overflow-hidden ${isDarkMode ? 'dark bg-slate-900' : 'bg-slate-50'}`}>
+    <div className="fixed inset-0 flex flex-col h-[100dvh] w-screen font-sans overflow-hidden bg-white dark:bg-slate-900 transition-colors">
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} filter={filter} setFilter={setFilter} today={today} />
 
       <main className="flex-1 relative overflow-hidden">
@@ -147,7 +144,6 @@ function App() {
             attribution='OneMap'
           />
           <LocateButton isDarkMode={isDarkMode} />
-
           {filteredHawkers.map(hawker => (
             <Marker
               key={hawker.id}
@@ -176,7 +172,10 @@ function App() {
         <SettingsDrawer isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} onClearFavorites={clearFavorites} favoritesCount={favorites.length} isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
       </main>
 
-      <footer className="bg-white dark:bg-slate-800 dark:border-slate-700 border-t p-2 text-[9px] text-slate-400 text-center z-[1000] font-bold uppercase tracking-widest shadow-2xl">
+      <footer className={`border-t p-2 text-[9px] text-center z-[1000] font-bold uppercase tracking-widest shadow-2xl transition-colors ${isDarkMode
+          ? 'bg-slate-800 border-slate-700 text-slate-500'
+          : 'bg-white border-slate-200 text-slate-400'
+        }`}>
         Showing {filteredHawkers.length} Live Hawker Centres
       </footer>
     </div>
