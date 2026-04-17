@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { AlertTriangle, Loader2, Menu } from 'lucide-react';
+import { Analytics } from "@vercel/analytics/react";
 import LocateButton from './components/LocateButton';
 import HawkerPopup from './components/HawkerPopup';
 import SettingsDrawer from './components/SettingsDrawer';
@@ -20,7 +21,6 @@ function App() {
 
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("dark-mode") === "true");
 
-  // This is the "Nuclear Fix" for the stuck footer
   useEffect(() => {
     const root = window.document.documentElement;
     if (isDarkMode) {
@@ -118,6 +118,7 @@ function App() {
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-white dark:bg-slate-900 text-violet-600 transition-colors">
         <Loader2 className="animate-spin mb-4" size={48} />
         <h1 className="text-xl font-black uppercase tracking-widest dark:text-violet-400">Syncing...</h1>
+        <Analytics />
       </div>
     );
   }
@@ -129,12 +130,14 @@ function App() {
         <h1 className="text-xl font-bold uppercase">Connection Error</h1>
         <p className="mt-2 text-sm max-w-xs dark:text-red-400">{error}</p>
         <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2 bg-red-600 text-white rounded-full font-bold">Retry</button>
+        <Analytics />
       </div>
     );
   }
 
   return (
     <div className="fixed inset-0 flex flex-col h-[100dvh] w-screen font-sans overflow-hidden bg-white dark:bg-slate-900 transition-colors">
+      <Analytics />
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} filter={filter} setFilter={setFilter} today={today} />
 
       <main className="flex-1 relative overflow-hidden">
@@ -173,8 +176,8 @@ function App() {
       </main>
 
       <footer className={`border-t p-2 text-[9px] text-center z-[1000] font-bold uppercase tracking-widest shadow-2xl transition-colors ${isDarkMode
-          ? 'bg-slate-800 border-slate-700 text-slate-500'
-          : 'bg-white border-slate-200 text-slate-400'
+        ? 'bg-slate-800 border-slate-700 text-slate-500'
+        : 'bg-white border-slate-200 text-slate-400'
         }`}>
         Showing {filteredHawkers.length} Live Hawker Centres
       </footer>
